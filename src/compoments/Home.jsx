@@ -1,4 +1,9 @@
+import { useRef } from "react";
 import { useState } from "react";
+import DataContext from "../Contexts/DataContext";
+import Filter from "./Filter";
+import Gallery from "./Gallery";
+import { galleryData } from "../js/data/galleryData.js";
 
 function Home(){
 
@@ -12,7 +17,22 @@ function Home(){
     const [cbAsc, setCbAsc] = useState(true);
     const [cbDesc, setCbDesc] = useState(true);
 
+    const galleryBlock = useRef(null);
+    const filterBlock = useRef(null);
+    
+    const [galleryItems, setGalleryItems] = useState(galleryData);
+
     return (
+        <DataContext.Provider value={{
+            sortType, setSortType,
+            carType, setCarType,
+            priceGap, setPriceGap,
+            yearGap, setYearGap,
+            cbAsc, setCbAsc,
+            cbDesc, setCbDesc,
+            setGalleryItems,
+            galleryItems,
+        }}>
         <div className="home">
             <header className="container" id="header-container">
                 <a href="./" className="logo-container">
@@ -56,62 +76,8 @@ function Home(){
                         </form>
                         <button type="button" name="submit_button" className="fa fa-search btn-search" id="btn-search" form="form-search" value="Search"/>
                     </div>
-                    <div className="filter-container">
-                        <h2 className="filter-title" id="filter_expander"><ins>Filter</ins> {'>>'} </h2>
-                        <form id="filter_form">
-                            <div className="select-1">
-                                <label htmlFor="sort">Sort:</label><br/>     
-                                <select id="sort" name="sort" 
-                                value={sortType} onChange={(e)=>setSortType(e.target.value)}>
-                                    <option value="relevant">Relevant</option>
-                                    <option value="new">New</option>
-                                </select>
-                            </div>
-                            <div className="select-2">
-                                <label htmlFor="c-type">Type:</label><br/>
-                                <select id="c-type" name="c-type" 
-                                value={carType} onChange={(e)=>setCarType(e.target.value)}>
-                                    <option value="both">Both</option>
-                                    <option value="mechanical">Mechanical</option>
-                                    <option value="nonMechanical">Non-mechanical</option>
-                                </select>
-                            </div>
-                            <div className="select-3">
-                                <label htmlFor="price-gap">Price:</label><br/>
-                                <select id="price-gap" name="price-gap" 
-                                value={priceGap} onChange={(e) => setPriceGap(e.target.value)}>
-                                    <option value="any">Any</option>
-                                    <option value="500 - 1500">500 - 1500 &euro;</option>
-                                    <option value="1500 - 2500">1500 - 2500 &euro;</option>
-                                    <option value="2500 - 3500">2500 - 3500 &euro;</option>
-                                    <option value="3500 - 4500">3500 - 4500 &euro;</option>
-                                    <option value="4500 - 6000">4500 - 6000 &euro;</option>
-                                </select>
-                            </div>
-                            <div className="select-4">
-                                <label htmlFor="c-age">Vehicle age:</label><br/>
-                                <select id="c-age" name="c-type" 
-                                value={yearGap} onChange={(e) => setYearGap(e.target.value)}>
-                                    <option value="any">Any</option>
-                                    <option value="1 - 3">1 - 3 years</option>
-                                    <option value="3 - 5">3 - 5 years</option>
-                                    <option value="5 - 10">5 - 10 years</option>
-                                </select>
-                            </div>
-                            <div className="sort-option">
-                                <input type="radio" id="radio-a-input" name="radio-input" value="ascend" 
-                                checked={cbAsc} onChange={() => setCbAsc(c => !c)}/>
-                                <label htmlFor="radio-a-input">Ascend</label><br/>
-                                <input type="radio" id="radio-d-input" name="radio-input" value="descend"
-                                checked={cbDesc} onChange={() => setCbDesc(c => !c)}/>
-                                <label htmlFor="radio-d-input">Descend</label><br/>
-                            </div>
-                            <input type="button" name="btn-apply" id="btn-apply" value="Apply"/>
-                        </form>
-                    </div>
-                    <div className="gallery-container" id="gallery_container">
-                
-                    </div> 
+                    <Filter galleryBlock={galleryBlock} filterBlock={filterBlock}/>
+                    <Gallery galleryBlock={galleryBlock}/> 
                 </div>
                 <div className="ad-container">
                     <a href="/#" target="_blank">
@@ -127,6 +93,7 @@ function Home(){
                 <p>&#169; Anonymous</p>
             </footer>
         </div>
+        </DataContext.Provider>
     );
 }
 
